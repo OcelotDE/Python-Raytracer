@@ -10,6 +10,28 @@ from General.Rays import Ray
 
 from PIL import Image
 
+import datetime
+
+import multiprocessing
+import numpy as np
+
+progress: int = 0
+
+def render_chunk(args):
+    chunk_start, chunk_end, camera, world = args
+    local_results = []
+    for j in range(chunk_start, chunk_end):
+        for i in range(camera.image_width):
+            pixel_color = Vec3(0, 0, 0)
+            for sample in range(camera.samples_per_pixel):
+                r = camera.get_ray(i, j)
+                ray_color = camera._Camera__ray_color(r, camera.max_depth, world)
+                pixel_color += ray_color
+            color_value = write_color(pixel_color, camera.samples_per_pixel)
+            local_results.append(color_value)
+    return local_results
+
+
 
 class Camera:
     # Public stuff
@@ -37,20 +59,41 @@ class Camera:
     def render(self, world):
         self.__initialize()
 
-        # Create a blank image with RGB mode and white background
-        image = Image.new("RGB", (self.image_width, self.__image_height), "white")
-        pixels = image.load()
+        # Number of CPU cores to utilize
+        num_cores = multiprocessing.cpu_count()
 
-        for j in range(self.__image_height):
-            for i in range(self.image_width):
-                print(f'rendering frame x={i}/{self.image_width} y={j}/{self.__image_height}')
+        # Divide the image into chunks for parallel processing
+        chunk_size = self._Camera__image_height // num_cores
 
-                self.__calculate_pixel(i, j, world, pixels)
+        # Combine local results into the final image data
+        final_image_data = []
 
+        # Create a pool of workers
+        with multiprocessing.Pool(processes=num_cores) as pool:
+            # Use imap to asynchronously process chunks and get results
+            chunk_results = pool.imap(render_chunk, [(i * chunk_size, (i + 1) * chunk_size, self, world) for i in
+                                                     range(num_cores)])
 
+            # Track processed chunks for progress indication
+            processed_chunks = 0
+
+            # Iterate through chunk results as they become available
+            for local_results in chunk_results:
+                processed_chunks += 1
+                print(f"Processed {processed_chunks} out of {num_cores} chunks")
+
+                # Combine local results into the final image data
+                final_image_data.extend(local_results)
+
+        # Create a NumPy array from the combined results
+        image_array = np.array(final_image_data, dtype=np.uint8).reshape(
+            (self.image_width, self._Camera__image_height, 3))
+
+        # Create an image from the NumPy array
+        image = Image.fromarray(image_array, 'RGB')
 
         # Save the image
-        image.save("output2.png")
+        image.save(f"output-{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png")
 
         # Display the image using the default image viewer
         image.show()
@@ -58,7 +101,7 @@ class Camera:
     def __initialize(self):
         # TODO: ADD DEFOCUS
 
-        self.__image_height = int(self.image_width / self.aspect_ratio)
+        self.__image_height = self.image_width
 
         self.__camera_center = self.lookfrom
 

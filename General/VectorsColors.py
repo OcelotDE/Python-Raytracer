@@ -1,12 +1,10 @@
 from General.Vectors import Vec3
 from numpy import clip, sqrt
 
-
 def linear_to_gamma(linear_component):
     return sqrt(linear_component)
 
-
-def write_color(pixels, x, y, pixel_color, samples_per_pixel):
+def write_color(pixel_color, samples_per_pixel):
     # Divide the color by the number of samples.
     scale = 1.0 / samples_per_pixel
     r = pixel_color.x() * scale
@@ -18,9 +16,9 @@ def write_color(pixels, x, y, pixel_color, samples_per_pixel):
     g = linear_to_gamma(g)
     b = linear_to_gamma(b)
 
-    # Clamp the color values to [0, 0.999] and write the translated [0,255] value of each color component.
+    # Clamp the color values to [0, 0.999] and return the translated [0,255] value of each color component.
     ir = int(256 * clip(r, 0.0, 0.999))
     ig = int(256 * clip(g, 0.0, 0.999))
     ib = int(256 * clip(b, 0.0, 0.999))
 
-    pixels[x, y] = Vec3(ir, ig, ib).e
+    return Vec3(ir, ig, ib).e
