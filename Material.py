@@ -3,7 +3,8 @@ from General.Rays import Ray
 from General.Vectors import Vec3, random_unit_vector, reflect, unit_vector, dot
 from Hittable.HittableObject import HitRecord
 
-from math import sqrt
+from math import sqrt, atan2, asin, pi
+from PIL import Image
 
 
 class Material(ABC):
@@ -64,3 +65,12 @@ class Dielectric(Material):
         r_out_perp = etai_over_etat * (uv + cos_theta * n)
         r_out_parallel = -sqrt(abs(1.0 - r_out_perp.length_squared())) * n
         return r_out_perp + r_out_parallel
+
+
+class DiffuseLight(Material):
+    def __init__(self, emit: Vec3, scale_factor: float = 1.0):
+        self.emit = emit * scale_factor
+
+    def scatter(self, r_in: Ray, rec: HitRecord) -> (Ray, Vec3):
+        # Light-emitting materials do not scatter, so return None for the scattered ray
+        return None, self.emit
