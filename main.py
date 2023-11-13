@@ -1,11 +1,9 @@
-import numpy as np
-
 from General.Vectors import Vec3
 from Hittable.HittableList import HittableList
 from Hittable.Sphere import Sphere
 from Hittable.Cube import Cube
 from Camera.Camera import Camera
-from Material import Lambertian, Metal, Dielectric, DiffuseLight
+from General.Material import Lambertian, Metal, Dielectric, DiffuseLight
 
 import time
 
@@ -19,7 +17,7 @@ if __name__ == "__main__":
     material_gold = Metal(Vec3(0.8, 0.6, 0.2), 0.0)
     material_pink = Metal(Vec3(0.7, 0.0, 0.3), 0.1)
     material_glass = Dielectric(1.5)
-    material_light = DiffuseLight(Vec3(0, 0, 1), 40.0)
+    material_light = DiffuseLight(Vec3(0, 0, 1), 50.0)
 
     world.add(Sphere(Vec3(0, -1000, 0), 1000, material_ground))
 
