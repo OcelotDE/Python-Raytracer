@@ -9,17 +9,17 @@ import time
 
 if __name__ == "__main__":
     # Generate world and add elements into it
-    world = HittableList()
+    world = HittableList()  # creating a world object that contains every sphere and cube of the scene
 
-    material_ground = Lambertian(Vec3(0.5, 0.5, 0.5))
-    material_center = Lambertian(Vec3(0.7, 0.5, 1.0))
-    material_brushed_metal = Metal(Vec3(0.8, 0.8, 0.8), 0.3)
-    material_gold = Metal(Vec3(0.8, 0.6, 0.2), 0.0)
-    material_pink = Metal(Vec3(0.7, 0.0, 0.3), 0.1)
-    material_glass = Dielectric(1.5)
-    material_light = DiffuseLight(Vec3(0, 0, 1), 50.0)
+    material_ground = Lambertian(Vec3(0.5, 0.5, 0.5))  # matte gray material
+    material_center = Lambertian(Vec3(0.7, 0.5, 1.0))  # matte purple material
+    material_brushed_metal = Metal(Vec3(0.8, 0.8, 0.8), 0.3)  # brushed metal material
+    material_gold = Metal(Vec3(0.8, 0.6, 0.2), 0.0)  # brushed gold material
+    material_pink = Metal(Vec3(0.7, 0.0, 0.3), 0.1)  # matte pink material
+    material_glass = Dielectric(1.5)  # glass material
+    material_light = DiffuseLight(Vec3(0, 0, 1), 50.0)  # light emitting material
 
-    world.add(Sphere(Vec3(0, -1000, 0), 1000, material_ground))
+    world.add(Sphere(Vec3(0, -1000, 0), 1000, material_ground))  # add a ground sphere
 
     # for a in range(-11, 11, 3):
     #     for b in range(-11, 11, 3):
@@ -42,27 +42,27 @@ if __name__ == "__main__":
     #                 sphere_material = Dielectric(1.5)
     #             world.add(Sphere(center, 0.2, sphere_material))
 
-    world.add(Cube(Vec3(-3, 0, -5), Vec3(-1, 2, -3), material_pink))
-    world.add(Cube(Vec3(0, 0, -5), Vec3(1, 1, -4), material_light))
+    world.add(Cube(Vec3(-3, 0, -5), Vec3(-1, 2, -3), material_pink))  # add a cube with matte pink material
+    world.add(Cube(Vec3(0, 0, -5), Vec3(1, 1, -4), material_light))  # add a cube with light emitting material
 
-    world.add(Sphere(Vec3(1, 1, 2), 1.0, material_glass))
+    world.add(Sphere(Vec3(1, 1, 2), 1.0, material_glass))  # add a sphere with glass material
 
-    world.add(Sphere(Vec3(-4, 1, 0), 1.0, material_brushed_metal))
+    world.add(Sphere(Vec3(-4, 1, 0), 1.0, material_brushed_metal))  # add a sphere with brushed metal material
 
-    world.add(Sphere(Vec3(4, 0.5, 1), 0.5, material_gold))
+    world.add(Sphere(Vec3(4, 0.5, 1), 0.5, material_gold))  # add a sphere with gold material
 
     # Create camera and render the world
-    cam = Camera()
-    cam.image_width = 500
-    cam.samples_per_pixel = 10
-    cam.max_depth = 10
-    cam.vfov = 31
-    cam.lookfrom = Vec3(13, 3, 5)
-    cam.lookat = Vec3(0, 0, 0)
-    cam.vup = Vec3(0, 1, 0)
+    cam = Camera()  # creating a camera object
+    cam.image_width = 500  # setting the image width (and height) to 500
+    cam.samples_per_pixel = 1  # setting the anti-aliasing sampling rate to 20
+    cam.max_depth = 100  # setting the max depth of the ray (bounces) to 10
+    cam.vfov = 31  # setting the vertical field of view to 31
+    cam.lookfrom = Vec3(13, 3, 5)  # setting the camera position to (13, 3, 5)
+    cam.lookat = Vec3(0, 0, 0)  # setting the camera look at position to (0, 0, 0)
+    cam.vup = Vec3(0, 1, 0)  # setting the camera up vector to (0, 1, 0)
 
-    start_time = time.time()
+    start_time = time.time()  # start the timer to see the render duration after its done
 
-    cam.render(world)
+    cam.render(world)  # render the world
 
-    print(f"Render finished after {int(time.time() - start_time)} seconds.")
+    print(f"Render finished after {int(time.time() - start_time)} seconds.")  # print the render duration

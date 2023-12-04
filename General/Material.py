@@ -3,8 +3,7 @@ from General.Rays import Ray
 from General.Vectors import Vec3, random_unit_vector, reflect, unit_vector, dot
 from Hittable.HittableObject import HitRecord
 
-from math import sqrt, atan2, asin, pi
-from PIL import Image
+from math import sqrt
 
 
 class Material(ABC):

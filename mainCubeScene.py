@@ -1,14 +1,9 @@
-import numpy as np
-
 from General.Vectors import Vec3
 from Hittable.HittableList import HittableList
 from Hittable.Sphere import Sphere
 from Hittable.Cube import Cube
 from Camera.Camera import Camera
-from Material import Lambertian, Metal, Dielectric, DiffuseLight
-
-from numpy.random import random as random_float
-from numpy.random import uniform
+from General.Material import Lambertian, DiffuseLight
 
 import time
 

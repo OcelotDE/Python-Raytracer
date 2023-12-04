@@ -1,15 +1,17 @@
+# Class representing an interval defined by a minimum and maximum value
 class Interval:
     def __init__(self, minimum=float('inf'), maximum=float('-inf')):
-        self.min = minimum
-        self.max = maximum
+        self.min = minimum  # Initializing the minimum value of the interval
+        self.max = maximum  # Initializing the maximum value of the interval
 
+    # Check if a value x is within the interval
     def contains(self, x):
-        return self.min <= x <= self.max
+        return self.min <= x <= self.max  # Returns True if x is within the interval, False otherwise
 
+    # Check if a value x is strictly within the interval
     def surrounds(self, x):
-        return self.min < x < self.max
+        return self.min < x < self.max  # Returns True if x is strictly within the interval, False otherwise
 
-
-# Define the empty and universe intervals
-empty = Interval(float('inf'), float('-inf'))
-universe = Interval(float('-inf'), float('inf'))
+# Define two special intervals: an empty interval and a universe interval
+empty = Interval(float('inf'), float('-inf'))  # Represents an empty interval where min > max initially
+universe = Interval(float('-inf'), float('inf'))  # Represents a universe interval that spans from negative infinity to positive infinity
