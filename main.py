@@ -45,7 +45,8 @@ if __name__ == "__main__":
     world.add(Cube(Vec3(-3, 0, -5), Vec3(-1, 2, -3), material_pink))  # add a cube with matte pink material
     world.add(Cube(Vec3(0, 0, -5), Vec3(1, 1, -4), material_light))  # add a cube with light emitting material
 
-    world.add(Sphere(Vec3(1, 1, 2), 1.0, material_glass))  # add a sphere with glass material
+    #world.add(Sphere(Vec3(1, 1, 2), 1.0, material_glass))  # add a sphere with glass material
+    world.add(Cube(Vec3(3, 1, 2), Vec3(4, 2, 3), material_glass))  # add a cube with matte pink material
 
     world.add(Sphere(Vec3(-4, 1, 0), 1.0, material_brushed_metal))  # add a sphere with brushed metal material
 
@@ -53,9 +54,9 @@ if __name__ == "__main__":
 
     # Create camera and render the world
     cam = Camera()  # creating a camera object
-    cam.image_width = 500  # setting the image width (and height) to 500
-    cam.samples_per_pixel = 1  # setting the anti-aliasing sampling rate to 20
-    cam.max_depth = 100  # setting the max depth of the ray (bounces) to 10
+    cam.image_width = 400  # setting the image width (and height) to 500
+    cam.samples_per_pixel = 10  # setting the anti-aliasing sampling rate to 20
+    cam.max_depth = 1000  # setting the max depth of the ray (bounces) to 10
     cam.vfov = 31  # setting the vertical field of view to 31
     cam.lookfrom = Vec3(13, 3, 5)  # setting the camera position to (13, 3, 5)
     cam.lookat = Vec3(0, 0, 0)  # setting the camera look at position to (0, 0, 0)
