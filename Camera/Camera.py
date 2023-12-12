@@ -17,9 +17,11 @@ from PIL import Image  # Import Image class from PIL library for image processin
 import datetime  # Import datetime module for working with dates and times
 import multiprocessing  # Import multiprocessing module for parallel processing
 import numpy as np  # Import numpy library for numerical operations
+import os # Import os module for working with the operating system
 
 # Global variable to track progress
 progress: int = 0
+
 
 # Function to render a chunk of the scene in parallel
 def render_chunk(args):
@@ -27,21 +29,21 @@ def render_chunk(args):
     chunk_start, chunk_end, camera, world = args  # Unpack arguments
     local_results = []  # Initialize a list to store local results
     for j in range(chunk_start, chunk_end):  # Iterate through rows in the chunk
-        for i in range(camera.image_width):  # Iterate through columns in the image
+        for i in range(camera.image_size):  # Iterate through columns in the image
             pixel_color = Vec3(0, 0, 0)  # Initialize pixel color to black
             for sample in range(camera.samples_per_pixel):  # Perform multiple samples per pixel
                 r = camera.get_ray(i, j)  # Get a ray for the pixel
-                ray_color = camera._Camera__ray_color(r, camera.max_depth, world)  # Get color for the ray
+                ray_color = camera.ray_color(r, camera.max_depth, world)  # Get color for the ray
                 pixel_color += ray_color  # Accumulate ray colors for the pixel
             color_value = write_color(pixel_color, camera.samples_per_pixel)  # Calculate final color value
             local_results.append(color_value)  # Store color value in local results
     return local_results  # Return local results for the chunk
 
+
 # Camera class definition
 class Camera:
     # Public attributes defining rendering settings
-    image_width = 100  # Width of the rendered image
-    aspect_ratio = 1.0  # Aspect ratio of the image
+    image_size = 100  # Width of the rendered image
     samples_per_pixel = 10  # Number of samples per pixel for anti-aliasing
     max_depth = 10  # Maximum depth for ray recursion
     vfov = 90  # Vertical field of view
@@ -50,7 +52,6 @@ class Camera:
     vup = Vec3(0, 1, 0)  # Camera's up vector
 
     # Private attributes for internal calculations
-    __image_height: int  # Height of the image
     __camera_center: Vec3  # Camera center position
     __pixel00_loc: Vec3  # Location of the top-left pixel
     __pixel_delta_u: Vec3  # Pixel-to-pixel change in the horizontal direction
@@ -67,7 +68,7 @@ class Camera:
         num_cores = multiprocessing.cpu_count()
 
         # Divide the image into chunks for parallel processing
-        chunk_size = self.image_width // num_cores
+        chunk_size = self.image_size // num_cores
 
         # Combine local results into the final image data
         final_image_data = []
@@ -89,7 +90,7 @@ class Camera:
                 final_image_data.extend(local_results)  # Extend the final image data with local results
 
         # Calculate expected and actual size of the final image data
-        real_size = np.square(self.image_width) * 3
+        real_size = np.square(self.image_size) * 3
         current_size = np.array(final_image_data).size
         difference = real_size - current_size
 
@@ -106,12 +107,13 @@ class Camera:
         print(f"adjusted to {np.array(final_image_data).size}")  # Print adjusted size information
 
         # Create a NumPy array from the combined results
-        image_array = np.array(final_image_data, dtype=np.uint8).reshape((self.image_width, self.image_width, 3))
+        image_array = np.array(final_image_data, dtype=np.uint8).reshape((self.image_size, self.image_size, 3))
 
         # Create an image from the NumPy array
         image = Image.fromarray(image_array, 'RGB')
 
         # Save the image with a timestamp in the filename
+        os.makedirs("outputs", exist_ok=True)  # Create the directory if it doesn't exist
         image.save(f"outputs/output-{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png")
 
         # Display the image using the default image viewer
@@ -119,9 +121,6 @@ class Camera:
 
     # Function to initialize camera parameters
     def __initialize(self):
-        # Set the image height equal to the image width
-        self.__image_height = self.image_width
-
         # Set the camera center to the look-from position
         self.__camera_center = self.lookfrom
 
@@ -130,19 +129,19 @@ class Camera:
         theta = math.radians(self.vfov)
         h = math.tan(theta / 2)
         viewport_height = 2 * h * focal_length
-        viewport_width = viewport_height * (self.image_width / self.__image_height)
+        viewport_width = viewport_height * (self.image_size / self.image_size)
         self.__w = unit_vector(self.lookfrom - self.lookat)
         self.__u = unit_vector(cross(self.vup, self.__w))
         self.__v = cross(self.__w, self.__u)
         viewport_u = viewport_width * self.__u
         viewport_v = viewport_height * -self.__v
-        self.__pixel_delta_u = viewport_u / self.image_width
-        self.__pixel_delta_v = viewport_v / self.__image_height
+        self.__pixel_delta_u = viewport_u / self.image_size
+        self.__pixel_delta_v = viewport_v / self.image_size
         viewport_upper_left = self.__camera_center - (focal_length * self.__w) - viewport_u / 2 - viewport_v / 2
         self.__pixel00_loc = viewport_upper_left + 0.5 * (self.__pixel_delta_u + self.__pixel_delta_v)
 
     # Function to calculate the color of a ray recursively
-    def __ray_color(self, r, depth, world):
+    def ray_color(self, r, depth, world):
         if depth <= 0:
             return Vec3(0, 0, 0)  # Return black for rays that exceed recursion depth
         rec = HitRecord()
@@ -152,7 +151,7 @@ class Camera:
                 return emitted  # If the material emits light, return the emitted color
             scattered, attenuation = rec.material.scatter(r, rec)
             if scattered is not None:
-                return attenuation * self.__ray_color(scattered, depth - 1, world)
+                return attenuation * self.ray_color(scattered, depth - 1, world)
         unit_direction = unit_vector(r.direction())
         t = 0.5 * (unit_direction.y() + 1.0)
         return (1.0 - t) * Vec3(1.0, 1.0, 1.0) + t * Vec3(0.5, 0.7, 1.0)
