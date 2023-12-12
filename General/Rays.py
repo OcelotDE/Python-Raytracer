@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 from math import sqrt  # Import the square root function from the math module
 from General.Vectors import Vec3, dot  # Import Vec3 class and dot function from General.Vectors module
 

@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 from General.Vectors import Vec3  # Importing the Vec3 class from General.Vectors module
 from numpy import clip, sqrt  # Importing clip function and square root function from numpy
 

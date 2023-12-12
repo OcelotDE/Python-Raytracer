@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 # Imported libraries
 import math  # Import the math module for mathematical operations
 import numpy.random as rnd  # Import a subset of the numpy library for random number generation

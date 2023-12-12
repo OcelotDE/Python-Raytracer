@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 from Hittable.HittableObject import Hittable, HitRecord  # Importing necessary classes
 from General.Vectors import dot  # Importing dot product function from General.Vectors module
 from General.Rays import Ray  # Importing Ray class from General.Rays module

@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 from abc import ABC, abstractmethod  # Imports the ABC module and abstractmethod decorator
 from General.Rays import Ray  # Imports the Ray class from General.Rays module
 from General.Vectors import Vec3, random_unit_vector, reflect, unit_vector, \

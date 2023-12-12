@@ -1,3 +1,10 @@
+"""
+Author: 6377468
+Project: Python Raytracer for computer graphics
+Description: A raytracer that uses multiprocessing to raytrace images in a 3d scene
+Date: December 12, 2023
+"""
+
 # Class representing an interval defined by a minimum and maximum value
 class Interval:
     def __init__(self, minimum=float('inf'), maximum=float('-inf')):
